@@ -13,14 +13,13 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.minigame.Interface.BallInterface;
+import com.minigame.Interface.GameEventSink;
 import com.minigame.hitbricks.R;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
@@ -40,8 +39,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private int lifeNum = 2; //剩余生命数
 	private int score = 0; //得分
 	private boolean isLoops = true; //控制程序是否刷新canvas
-	public int gameState = 1; //游戏状态
+	public int gameState = 1; //游戏状态：1 暂停；2 运行；3 结束
 	private boolean isBrickEmpty = false; //标记本关砖块是否已空
+	private GameEventSink gameEventSink = null; //游戏事件接收器
 	
 	//球
 	private Paint paint = null; //画笔
@@ -312,7 +312,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		
 		//绘制暂停/结束等信息
 		if(gameState == 1){
-			drawText("按菜单键 开始/暂停 游戏", screenWidth / 2f, boardTop - 200, canvas, paint, Color.WHITE, 20);
+			//drawText("按菜单键 开始/暂停 游戏", screenWidth / 2f, boardTop - 200, canvas, paint, Color.WHITE, 20);
 		}
 		if(gameState == 3){
 			drawText("GAME OVER", screenWidth / 2f, boardTop - 200, canvas, paint, Color.RED, 50);
@@ -733,6 +733,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	 */
 	public void startGame(){
 		gameState = 2;
+		if (gameEventSink != null) {
+			gameEventSink.onGameEvent(GameEventSink.GAME_PLAYING);
+		}
 	}
 	
 	/**
@@ -743,6 +746,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		synchronized (holder) {
 			draw();
 		}
+		if (gameEventSink != null) {
+			gameEventSink.onGameEvent(GameEventSink.GAME_PAUSED);
+		}
+	}
+
+	public void setGameEventSink(GameEventSink sink) {
+		gameEventSink = sink;
 	}
 	
 	/**

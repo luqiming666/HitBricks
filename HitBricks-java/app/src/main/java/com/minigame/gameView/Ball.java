@@ -4,7 +4,6 @@ import com.minigame.Interface.BallInterface;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 
 public class Ball implements BallInterface{

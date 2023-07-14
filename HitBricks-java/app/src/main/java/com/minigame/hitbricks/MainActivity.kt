@@ -2,26 +2,30 @@ package com.minigame.hitbricks
 
 import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.minigame.gameView.GameView
+import com.minigame.Interface.GameEventSink
+import com.minigame.hitbricks.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GameEventSink {
 
-    private var gameView: GameView? = null
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gameView = GameView(this)
-        setContentView(gameView)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // 进入全屏模式
         supportActionBar?.hide()
         hideStatusBar()
 
-        gameView!!.startGame()
+        binding.gameScreen.setGameEventSink(this)
+        binding.btnStartGame.setOnClickListener {
+            binding.gameScreen.startGame()
+        }
     }
 
     private fun hideStatusBar() {
@@ -35,24 +39,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_MENU -> if (gameView!!.gameState === 1) { //1表示游戏处于等待开始状态(暂停状态或者刚进入游戏等待开始状态)
-                //开始游戏
-                gameView!!.startGame()
-            } else if (gameView!!.gameState === 2) { //2表示游戏处于正在进行状态
-                //暂停游戏
-                gameView!!.pauseGame()
-            } else { //游戏处于结束状态
-                //游戏重置
-                gameView!!.resetGame()
+    override fun onGameEvent(type: Int): Unit {
+        when (type) {
+            GameEventSink.GAME_PLAYING -> {
+                binding.btnStartGame.visibility = View.GONE
             }
-            KeyEvent.KEYCODE_BACK -> {
-                //连续按两次退出游戏
-                //exitByDoubleClick()
+            GameEventSink.GAME_PAUSED -> {
+                runOnUiThread {
+                    binding.btnStartGame.visibility = View.VISIBLE
+                }
             }
-            else -> {}
         }
-        return false
     }
 }

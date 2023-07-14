@@ -1,7 +1,6 @@
 package com.minigame.gameView;
 
 import android.graphics.Bitmap;
-import android.view.WindowManager;
 
 public class Screen {
 	/**

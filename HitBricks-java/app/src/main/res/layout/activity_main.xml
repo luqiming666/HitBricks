@@ -6,5 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.minigame.gameView.GameView
+        android:id="@+id/gameScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
+    <Button
+        android:id="@+id/btnStartGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_game"
+        android:layout_gravity="center" />
 </FrameLayout>
