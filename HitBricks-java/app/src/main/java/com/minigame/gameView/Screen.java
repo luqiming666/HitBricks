@@ -44,15 +44,15 @@ public class Screen {
 		super();
 		brickWith = bitMap[0].getWidth();
 		brickHeight = bitMap[0].getHeight();
-		creatScreen1();
-		creatScreen2();
-		creatScreen3();
-		creatScreen4();
-		creatScreen5();
-		creatScreen6();
-		creatScreen7();
-		creatScreen8();
-		creatScreen9();
+		createScreen1();
+		createScreen2();
+		createScreen3();
+		createScreen4();
+		createScreen5();
+		createScreen6();
+		createScreen7();
+		createScreen8();
+		createScreen9();
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class Screen {
 		return null;
 	}
 	
-	public void creatScreen1(){ //生成第一个关卡砖块布局
+	public void createScreen1(){ //生成第一个关卡砖块布局
 		screen1 = new Brick[6][6];
 		top = maxTopBrick - padding - brickHeight;
 		for(int i = 0; i < 6; ++i){
@@ -92,7 +92,7 @@ public class Screen {
 		}
 	}
 	
-	public void creatScreen2(){ //生成第二个关卡砖块布局
+	public void createScreen2(){ //生成第二个关卡砖块布局
 		screen2 = new Brick[10][6];
 		top = maxTopBrick - padding - brickHeight;
 		for(int i = 0; i < 10; ++i){
@@ -110,7 +110,7 @@ public class Screen {
 		}
 	}
 	
-	public void creatScreen3(){ //生成第三个关卡砖块布局
+	public void createScreen3(){ //生成第三个关卡砖块布局
 		screen3 = new Brick[11][];
 		screen3[0] = new Brick[3];
 		for(int i = 1; i < 3; ++i)screen3[i] = new Brick[5];
@@ -147,7 +147,7 @@ public class Screen {
 		screen3[10][6].setDisap(false);
 	}
 	
-	public void creatScreen4(){ //生成第四个关卡砖块布局
+	public void createScreen4(){ //生成第四个关卡砖块布局
 		screen4 = new Brick[9][];
 		for(int i = 0; i < 9; ++i)screen4[i] = new Brick[i+1];
 		top = maxTopBrick - padding - brickHeight;
@@ -168,7 +168,7 @@ public class Screen {
 		}
 	}
 	
-	public void creatScreen5(){ //生成第五个关卡砖块布局
+	public void createScreen5(){ //生成第五个关卡砖块布局
 		screen5 = new Brick[11][];
 		for(int i = 0; i < 3; ++i)screen5[i] = new Brick[4 + i * 2];
 		for(int i = 3; i < 6; ++i)screen5[i] = new Brick[9];
@@ -200,7 +200,7 @@ public class Screen {
 		}
 	}
 	
-	public void creatScreen6(){ //生成第六个关卡砖块布局
+	public void createScreen6(){ //生成第六个关卡砖块布局
 		screen6 = new Brick[18][];
 		screen6[0] = new Brick[2];
 		screen6[1] = new Brick[3];
@@ -253,15 +253,15 @@ public class Screen {
 		}
 	}
 	
-	public void creatScreen7(){ //生成第七个关卡砖块布局
+	public void createScreen7(){ //生成第七个关卡砖块布局
 		screen7 = new Brick[0][0];
 	}
 	
-	public void creatScreen8(){ //生成第八个关卡砖块布局
+	public void createScreen8(){ //生成第八个关卡砖块布局
 		screen8 = new Brick[0][0];
 	}
 	
-	public void creatScreen9(){ //生成第九个关卡砖块布局
+	public void createScreen9(){ //生成第九个关卡砖块布局
 		screen9 = new Brick[0][0];
 	}
 }

@@ -1,6 +1,7 @@
 package com.minigame.gameView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -157,15 +158,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		Screen.bgMap[10] = Bitmap.createBitmap(bitMap, 0, 0, bgWidth, bgHeight, matrix, true);
 		
 		//设置关卡的布局砖块并获取关卡对象
-		Screen.bitMap[0] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick1)).getBitmap();
-		Screen.bitMap[1] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick2)).getBitmap();
-		Screen.bitMap[2] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick3)).getBitmap();
-		Screen.bitMap[3] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick4)).getBitmap();
-		Screen.bitMap[4] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick5)).getBitmap();
-		Screen.bitMap[5] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick6)).getBitmap();
-		Screen.bitMap[6] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick7)).getBitmap();
-		Screen.bitMap[7] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick8)).getBitmap();
-		Screen.bitMap[8] = ((BitmapDrawable)getResources().getDrawable(R.drawable.brick9)).getBitmap();
+		Matrix matrixXOnly = new Matrix(); // 只参考横向缩放比例
+		matrixXOnly.postScale(scaleWidth, scaleWidth);
+		List<Integer> listBricks = Arrays.asList(R.drawable.brick1, R.drawable.brick2, R.drawable.brick3,
+				R.drawable.brick4, R.drawable.brick5, R.drawable.brick6, R.drawable.brick7, R.drawable.brick8,
+				R.drawable.brick9);
+		for (int i = 0; i < listBricks.size(); i++) {
+			Bitmap tmpBMP = ((BitmapDrawable)getResources().getDrawable(listBricks.get(i))).getBitmap();
+			Screen.bitMap[i] = scaleBitmap(tmpBMP, matrixXOnly);
+		}
+
 		Screen.screenWidth = screenWidth;
 		Screen.screenHeight = screenHeight;
 		screen = new Screen();
@@ -185,17 +187,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		prop4Right = wallRight;
 		
 		//设置砖块消失效果
-		Brick.bitMapDisp[0] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff1)).getBitmap();
-		Brick.bitMapDisp[1] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff2)).getBitmap();
-		Brick.bitMapDisp[2] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff3)).getBitmap();
-		Brick.bitMapDisp[3] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff4)).getBitmap();
-		Brick.bitMapDisp[4] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff5)).getBitmap();
-		Brick.bitMapDisp[5] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff6)).getBitmap();
-		Brick.bitMapDisp[6] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff7)).getBitmap();
-		Brick.bitMapDisp[7] = ((BitmapDrawable)getResources().getDrawable(R.drawable.eff8)).getBitmap();
-		
+		List<Integer> listEffects = Arrays.asList(R.drawable.eff1, R.drawable.eff2, R.drawable.eff3,
+				R.drawable.eff4, R.drawable.eff5, R.drawable.eff6, R.drawable.eff7, R.drawable.eff8);
+		for (int i = 0; i < listEffects.size(); i++) {
+			Bitmap tmpBMP = ((BitmapDrawable)getResources().getDrawable(listEffects.get(i))).getBitmap();
+			Brick.bitMapDisp[i] = scaleBitmap(tmpBMP, matrixXOnly);
+		}
+
 		//初始化小球挡板的信息
 		Bitmap boardBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.board1)).getBitmap();
+		boardBitMap = scaleBitmap(boardBitMap, matrixXOnly);
 		//设置挡板位置
 		boardLeft = (screenWidth - boardBitMap.getWidth()) / 2;
 		boardTop = screenHeight - 180;
@@ -207,16 +208,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		boardDefault.setBottom(boardBottom);
 		
 		boardBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.board3)).getBitmap();
+		boardBitMap = scaleBitmap(boardBitMap, matrixXOnly);
 		boardShort = new Brick(boardBitMap, boardLeft, boardTop);
 		boardShort.setRight(boardLeft + boardBitMap.getWidth());
 		boardShort.setBottom(boardBottom);
 		
 		boardBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.board4)).getBitmap();
+		boardBitMap = scaleBitmap(boardBitMap, matrixXOnly);
 		boardLong1 = new Brick(boardBitMap, boardLeft, boardTop);
 		boardLong1.setRight(boardLeft + boardBitMap.getWidth());
 		boardLong1.setBottom(boardBottom);
 		
 		boardBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.board2)).getBitmap();
+		boardBitMap = scaleBitmap(boardBitMap, matrixXOnly);
 		boardLong2 = new Brick(boardBitMap, boardLeft, boardTop);
 		boardLong2.setRight(boardLeft + boardBitMap.getWidth());
 		boardLong2.setBottom(boardBottom);
@@ -227,6 +231,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		
 		//初始化小球的信息
 		Bitmap ballBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.ball)).getBitmap();
+		ballBitMap = scaleBitmap(ballBitMap, matrixXOnly);
 		float r = (ballBitMap.getWidth() - 14) / 2f; //r表示小球的半径
 		ball = new Ball(ballBitMap, boardGoalX - r, boardTop - r - r);
 		ball.setR(r);
@@ -234,6 +239,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		ball.setY(boardTop - r);
 		
 		ballBitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.ball2)).getBitmap();
+		ballBitMap = scaleBitmap(ballBitMap, matrixXOnly);
 		r = (ballBitMap.getWidth() - 5) / 2f; //r表示小球的半径
 		ball2 = new Ball(ballBitMap, 0, 0);
 		ball2.setR(r);
@@ -241,22 +247,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		ballList.add(ball.copy()); //添加主球
 		
 		//初始化道具
-		Prop.bitMap[0] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop1)).getBitmap();
-		Prop.bitMap[1] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop2)).getBitmap();
-		Prop.bitMap[2] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop3)).getBitmap();
-		Prop.bitMap[3] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop4)).getBitmap();
-		Prop.bitMap[4] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop5)).getBitmap();
-		Prop.bitMap[5] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop6)).getBitmap();
-		Prop.bitMap[6] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop7)).getBitmap();
-		Prop.bitMap[7] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop8)).getBitmap();
-		Prop.bitMap[8] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop9)).getBitmap();
-		Prop.bitMap[9] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop10)).getBitmap();
-		Prop.bitMap[10] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop11)).getBitmap();
-		Prop.bitMap[11] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop12)).getBitmap();
-		Prop.bitMap[12] = ((BitmapDrawable)getResources().getDrawable(R.drawable.prop13)).getBitmap();
-		
+		List<Integer> listProps = Arrays.asList(R.drawable.prop1, R.drawable.prop2, R.drawable.prop3,
+				R.drawable.prop4, R.drawable.prop5, R.drawable.prop6, R.drawable.prop7, R.drawable.prop8,
+				R.drawable.prop9, R.drawable.prop10, R.drawable.prop11, R.drawable.prop12, R.drawable.prop13);
+		for (int i = 0; i < listProps.size(); i++) {
+			Bitmap tmpBMP = ((BitmapDrawable)getResources().getDrawable(listProps.get(i))).getBitmap();
+			Prop.bitMap[i]  = scaleBitmap(tmpBMP, matrixXOnly);
+		}
+
 		//初始化道具效果剩余时间
-		for(int i = 0; i < propTime.length; ++i)propTime[i] = 0;
+		for(int i = 0; i < propTime.length; ++i) propTime[i] = 0;
+	}
+
+	private Bitmap scaleBitmap(Bitmap original, Matrix matrix) {
+		int oldWidth = original.getWidth(); //获取图片的宽度
+		int oldHeight = original.getHeight(); //获取图片的高度
+		Bitmap newBitmap = Bitmap.createBitmap(original, 0, 0, oldWidth, oldHeight, matrix, true);
+		return newBitmap;
+	}
+
+	public boolean isGameOver() {
+		return gameState == 3;
 	}
 	
 	/**
@@ -666,8 +677,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	 * 游戏失败,生命减1
 	 */
 	private void lifeDie(){
-		if(lifeNum == 0)gameState = 3;
-		else{
+		if (lifeNum == 0) {
+			gameState = 3;
+			notifyGameEvent(GameEventSink.GAME_OVER);
+		}
+		else {
 			--lifeNum;
 			resetLayout(false);
 		}
@@ -733,9 +747,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	 */
 	public void startGame(){
 		gameState = 2;
-		if (gameEventSink != null) {
-			gameEventSink.onGameEvent(GameEventSink.GAME_PLAYING);
-		}
+		notifyGameEvent(GameEventSink.GAME_PLAYING);
 	}
 	
 	/**
@@ -746,13 +758,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		synchronized (holder) {
 			draw();
 		}
-		if (gameEventSink != null) {
-			gameEventSink.onGameEvent(GameEventSink.GAME_PAUSED);
-		}
+		notifyGameEvent(GameEventSink.GAME_PAUSED);
 	}
 
 	public void setGameEventSink(GameEventSink sink) {
 		gameEventSink = sink;
+	}
+
+	private void notifyGameEvent(int type) {
+		if (gameEventSink != null) {
+			gameEventSink.onGameEvent(type);
+		}
 	}
 	
 	/**

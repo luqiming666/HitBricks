@@ -24,7 +24,12 @@ class MainActivity : AppCompatActivity(), GameEventSink {
 
         binding.gameScreen.setGameEventSink(this)
         binding.btnStartGame.setOnClickListener {
-            binding.gameScreen.startGame()
+            if (binding.gameScreen.isGameOver) {
+                binding.gameScreen.resetGame()
+                binding.gameScreen.startGame()
+            } else {
+                binding.gameScreen.startGame()
+            }
         }
     }
 
@@ -44,7 +49,7 @@ class MainActivity : AppCompatActivity(), GameEventSink {
             GameEventSink.GAME_PLAYING -> {
                 binding.btnStartGame.visibility = View.GONE
             }
-            GameEventSink.GAME_PAUSED -> {
+            GameEventSink.GAME_PAUSED, GameEventSink.GAME_OVER -> {
                 runOnUiThread {
                     binding.btnStartGame.visibility = View.VISIBLE
                 }
