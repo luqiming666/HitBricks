@@ -142,7 +142,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		bitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.bg5)).getBitmap();
 		Screen.bgMap[5] = Bitmap.createBitmap(bitMap, 0, 0, bgWidth, bgHeight, matrix, true);
 		
-		//bitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.bg6)).getBitmap(); //此处bug,为什么不能bg6
+		bitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.bg6)).getBitmap(); //此处bug,为什么不能bg6
 		Screen.bgMap[6] = Bitmap.createBitmap(bitMap, 0, 0, bgWidth, bgHeight, matrix, true);
 		
 		bitMap = ((BitmapDrawable)getResources().getDrawable(R.drawable.bg7)).getBitmap();
@@ -256,7 +256,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 
 		//初始化道具效果剩余时间
-		for(int i = 0; i < propTime.length; ++i) propTime[i] = 0;
+		Arrays.fill(propTime, 0);
 	}
 
 	private Bitmap scaleBitmap(Bitmap original, Matrix matrix) {
