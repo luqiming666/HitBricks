@@ -13,8 +13,10 @@
 
     <Button
         android:id="@+id/btnStartGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/circle_button_background"
         android:text="@string/start_game"
+        android:textSize="22sp"
         android:layout_gravity="center" />
 </FrameLayout>

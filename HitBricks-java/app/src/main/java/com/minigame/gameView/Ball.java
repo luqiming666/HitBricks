@@ -61,7 +61,7 @@ public class Ball implements BallInterface{
 	/**
 	 * 球移动
 	 */
-	public void movd(){
+	public void move(){
 		if(!isMove)return;
 		x += xOffset;
 		y += yOffset;

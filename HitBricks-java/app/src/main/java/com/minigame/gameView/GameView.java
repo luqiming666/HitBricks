@@ -161,8 +161,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		Matrix matrixXOnly = new Matrix(); // 只参考横向缩放比例
 		matrixXOnly.postScale(scaleWidth, scaleWidth);
 		List<Integer> listBricks = Arrays.asList(R.drawable.brick1, R.drawable.brick2, R.drawable.brick3,
-				R.drawable.brick4, R.drawable.brick5, R.drawable.brick6, R.drawable.brick7, R.drawable.brick8,
-				R.drawable.brick9);
+				R.drawable.brick4, R.drawable.brick5, R.drawable.brick6, R.drawable.brick7,
+				R.drawable.brick8, R.drawable.brick9);
 		for (int i = 0; i < listBricks.size(); i++) {
 			Bitmap tmpBMP = ((BitmapDrawable)getResources().getDrawable(listBricks.get(i))).getBitmap();
 			Screen.bitMap[i] = scaleBitmap(tmpBMP, matrixXOnly);
@@ -179,7 +179,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		//设置墙壁坐标
 		wallLeft = 33;
 		wallTop =  73;
-		wallRight = screenWidth - wallLeft;
+		wallRight = screenWidth - wallLeft * 2;
 		wallBottom = screenHeight - 20;
 		
 		//初始化道具墙
@@ -248,8 +248,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		
 		//初始化道具
 		List<Integer> listProps = Arrays.asList(R.drawable.prop1, R.drawable.prop2, R.drawable.prop3,
-				R.drawable.prop4, R.drawable.prop5, R.drawable.prop6, R.drawable.prop7, R.drawable.prop8,
-				R.drawable.prop9, R.drawable.prop10, R.drawable.prop11, R.drawable.prop12, R.drawable.prop13);
+				R.drawable.prop4, R.drawable.prop5, R.drawable.prop6, R.drawable.prop7,
+				R.drawable.prop8, R.drawable.prop9, R.drawable.prop10, R.drawable.prop11,
+				R.drawable.prop12, R.drawable.prop13);
 		for (int i = 0; i < listProps.size(); i++) {
 			Bitmap tmpBMP = ((BitmapDrawable)getResources().getDrawable(listProps.get(i))).getBitmap();
 			Prop.bitMap[i]  = scaleBitmap(tmpBMP, matrixXOnly);
@@ -316,10 +317,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 		
 		//画分数, 关卡和剩余机会次数
-		if(propTime[3] > 0)drawText(score + "", screenWidth / 2, 45, canvas, paint, Color.YELLOW, 40);
-		else drawText(score + "", screenWidth / 2, 45, canvas, paint, Color.BLACK, 40);
-		drawText("S" + "    " + Screen.screenId, screenWidth - 160, 45, canvas, paint, Color.BLACK, 40);
-		drawText("L" + "    " + lifeNum, 160, 45, canvas, paint, Color.BLACK, 40);
+		int scoreColor = Color.CYAN;
+		if (propTime[3] > 0) scoreColor = Color.YELLOW;
+		int gameInfoLineBottom = wallTop + 100; // 偏移量：文本的行高
+		drawText(score + "", screenWidth / 2, gameInfoLineBottom, canvas, paint, scoreColor, 40);
+		drawText("关卡:" + "   " + Screen.screenId, screenWidth - 160, gameInfoLineBottom, canvas, paint, Color.CYAN, 40);
+		drawText("生命:" + "   " + lifeNum, 160, gameInfoLineBottom, canvas, paint, Color.CYAN, 40);
 		
 		//绘制暂停/结束等信息
 		if(gameState == 1){
@@ -391,6 +394,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 							b.setExist(false);
 							score += b.getScore();
 							if(propTime[3] > 0)score += b.getScore();
+							notifyGameEvent(GameEventSink.EVENT_BULLET_HIT_BRICK); // 回调事件
 							//随机在该位置产生道具
 							isExistProp(b.getLeft(), b.getTop());
 						}
@@ -493,6 +497,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 						b.setExist(false);						
 						score += b.getScore();
 						if(propTime[3] > 0)score += b.getScore();
+						notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BRICK); // 回调事件
 						//随机在该位置产生道具
 						isExistProp(b.getLeft(), b.getTop());
 						return false;
@@ -506,19 +511,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if(ballX - ballR <= wallLeft){ //与左壁碰撞(可能是撞上左壁或者从左壁出来碰撞,所以xOffset *= -1需要进行判断)
 			if(xOffset < 0)xOffset *= -1; //这里加个判断是因为ballX - ballR并不一定是 == wallLeft,所以一次行走之后下一次可能仍然满足这个条件,但是方向却不能改变
 			ball.hitCorner(xOffset, yOffset);
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_WALL); // 回调事件
 			return false;
 		}
 		else if(ballY - ballR <= wallTop){ //与上壁碰撞
 			if(yOffset < 0)yOffset *= -1;
 			ball.hitCorner(xOffset, yOffset);
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_WALL); // 回调事件
 			return false;
 		}
 		else if(ballX + ballR >= wallRight){ //与右壁碰撞
 			if(xOffset > 0)xOffset *= -1;
 			ball.hitCorner(xOffset, yOffset);
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_WALL); // 回调事件
 			return false;
 		}
 		else if(ballY + ballR >= wallBottom){ //与下壁碰撞
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_WALL_DIE); // 回调事件
 			return true;
 		}
 		
@@ -552,11 +561,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 				ball.setY(boardTop - ball.getR());
 				ball.setMove(false);
 			}
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
 			return false;
 		}else if(flag == 2){ //与挡板侧面碰撞
 			if(ballX <= board.getLeft())ball.hitCorner(-14, -2);
 			else ball.hitCorner(14, -2);
 			if(propTime[5] > 0)ball.setMove(false); //小球粘贴在挡板上
+			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
 			return false;
 		}
 		return false;
@@ -639,7 +650,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if(propTime[5] > 0){ //小球粘贴在挡板上,跟着挡板移动
 			for(Ball b: ballList){
 				if(!b.isMove()){
-					b.move(offset);;
+					b.move(offset);
 				}
 			}
 		}
@@ -715,7 +726,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		//ballList = new ArrayList<Ball>(); //重新新建一个相当于清空,用clear的话会把ball也设置为空
 		float r = ball.getR();
 		ball.setPos(boardGoalX - r, boardTop - 2 * r, boardGoalX, boardTop - r);
-		ball.setOffsetId(5);;
+		ball.setOffsetId(5);
 		ballList.add(ball.copy()); //注意不能直接添加ball,否则clear的时候会把ball设置为null
 		
 		//重置关卡背景图和砖块
@@ -816,6 +827,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		synchronized (holder) {
 			draw();
 		}
+		isLoops = true;
 		new Thread(this).start();
 	}
 
@@ -848,7 +860,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 						ballList.add(ball.copy());
 					}
 				}
-				for(Ball b: ballList)b.movd(); //小球移动
+				for(Ball b: ballList)b.move(); //小球移动
 				moveBoard(); //挡板移动
 				for(Prop p: propList)Prop.move(p); //道具移动
 				for(Prop bullet: bulletList)Prop.move(bullet, -15); //子弹移动
