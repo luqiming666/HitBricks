@@ -199,7 +199,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 		boardBitMap = scaleBitmap(boardBitMap, matrixXOnly);
 		//设置挡板位置
 		boardLeft = (screenWidth - boardBitMap.getWidth()) / 2;
-		boardTop = screenHeight - 180;
+		boardTop = screenHeight - 380;
 		boardRight = boardLeft + boardBitMap.getWidth();
 		boardBottom = boardTop + boardBitMap.getHeight();
 		
@@ -493,11 +493,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 					else if(flag == 2)xOffset *= -1;
 					if(flag != 0){ //flag == 1 || flag == 2
 						ball.hitCorner(xOffset, yOffset);
+						notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BRICK); // 回调事件
 						if((!b.isDisap() && propTime[10] <= 0) || propTime[9] > 0)return false;
 						b.setExist(false);						
 						score += b.getScore();
 						if(propTime[3] > 0)score += b.getScore();
-						notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BRICK); // 回调事件
 						//随机在该位置产生道具
 						isExistProp(b.getLeft(), b.getTop());
 						return false;
@@ -556,18 +556,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 				else R = k - 1;
 			}
 			ball.setOffsetId(L - 1); //下标从0开始
+			if (ball.isMove()) {
+				notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
+			}
 			if(propTime[5] > 0){ //小球粘贴在挡板上
 				ball.setTop(boardTop - ball.getR() - ball.getR());
 				ball.setY(boardTop - ball.getR());
 				ball.setMove(false);
 			}
-			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
 			return false;
 		}else if(flag == 2){ //与挡板侧面碰撞
 			if(ballX <= board.getLeft())ball.hitCorner(-14, -2);
 			else ball.hitCorner(14, -2);
+			if (ball.isMove()) {
+				notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
+			}
 			if(propTime[5] > 0)ball.setMove(false); //小球粘贴在挡板上
-			notifyGameEvent(GameEventSink.EVENT_BALL_HIT_BOARD); // 回调事件
 			return false;
 		}
 		return false;

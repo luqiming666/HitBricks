@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#RichTap SDK
+-keep public class com.apprichtap.haptic.RichTapUtils{*;}
+-keep public class com.apprichtap.haptic.RichTapPlayer{*;}
+-keep public class com.apprichtap.haptic.base.ApiInfo{*;}
+-keep public class android.os.DynamicEffect{*;}
+-keep public class android.os.HapticPlayer{*;}

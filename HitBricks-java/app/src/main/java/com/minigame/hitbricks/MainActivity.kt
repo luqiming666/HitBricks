@@ -6,6 +6,8 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.apprichtap.haptic.RichTapUtils
+import com.apprichtap.haptic.base.PrebakedEffectId
 import com.minigame.Interface.GameEventSink
 import com.minigame.hitbricks.databinding.ActivityMainBinding
 
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity(), GameEventSink {
         supportActionBar?.hide()
         hideStatusBar()
 
+        RichTapUtils.getInstance().init(this)
+
         binding.gameScreen.setGameEventSink(this)
         binding.btnStartGame.setOnClickListener {
             if (binding.gameScreen.isGameOver) {
@@ -31,6 +35,11 @@ class MainActivity : AppCompatActivity(), GameEventSink {
                 binding.gameScreen.startGame()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        RichTapUtils.getInstance().quit()
     }
 
     private fun hideStatusBar() {
@@ -53,6 +62,16 @@ class MainActivity : AppCompatActivity(), GameEventSink {
                 runOnUiThread {
                     binding.btnStartGame.visibility = View.VISIBLE
                 }
+            }
+            GameEventSink.EVENT_BALL_HIT_BRICK, GameEventSink.EVENT_BALL_HIT_WALL,
+            GameEventSink.EVENT_BALL_HIT_BOARD -> {
+                RichTapUtils.getInstance().playExtPrebaked(PrebakedEffectId.RT_SOFT_CLICK, 200)
+            }
+            GameEventSink.EVENT_BULLET_HIT_BRICK -> {
+                RichTapUtils.getInstance().playExtPrebaked(PrebakedEffectId.RT_BOMB, 200)
+            }
+            GameEventSink.EVENT_BALL_HIT_WALL_DIE -> {
+                RichTapUtils.getInstance().playExtPrebaked(PrebakedEffectId.RT_FAILURE, 255)
             }
         }
     }
