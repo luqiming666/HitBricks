@@ -9,7 +9,7 @@ public class Screen {
 	 * 
 	 */
 	
-	private static int maxTopBrick = 200;
+	private static int maxTopBrick = 220;
 	private static int brickWith = 10; //砖块宽度
 	private static int brickHeight = 5; //砖块高度	
 	
