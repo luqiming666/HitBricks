@@ -37,7 +37,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private Matrix matrix = null; //主界面图片需要的matrix
 	private static int screenWidth = 0; //屏幕宽度
 	private static int screenHeight = 0; //屏幕高度
-	private int lifeNum = 2; //剩余生命数
+	private int lifeNum = 3; //剩余生命数
 	private int score = 0; //得分
 	private boolean isLoops = true; //控制程序是否刷新canvas
 	public int gameState = 1; //游戏状态：1 暂停；2 运行；3 结束
@@ -691,13 +691,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	/**
 	 * 游戏失败,生命减1
 	 */
-	private void lifeDie(){
+	private void lifeDie() {
+		--lifeNum;
 		if (lifeNum == 0) {
 			gameState = 3;
 			notifyGameEvent(GameEventSink.GAME_OVER);
-		}
-		else {
-			--lifeNum;
+		} else {
 			resetLayout(false);
 		}
 	}
@@ -752,7 +751,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 	 */
 	public void resetGame(){
 		score = 0; //分数清0
-		lifeNum = 2; //剩余生命
+		lifeNum = 3; //剩余生命
 		Screen.screenId = 1;
 		resetLayout(true);
 	}
